@@ -683,20 +683,20 @@ export default function ({ types: t, template }) {
     return node.declaration && ( t.isTypeAlias(node.declaration) || t.isInterfaceDeclaration(node.declaration) )
   }
 
-  function getWrappedVariableDeclaratorInitWithTypeCheckAST(declarator) {
+  function getWrappedVariableDeclaratorInitWithTypeCheckAST(declarator, typeParameters) {
     return getAssertCallExpression({
       id: declarator.init,
       name: t.stringLiteral(declarator.id.name || generate(declarator.id, { concise: true }).code),
       annotation: declarator.id.typeAnnotation.typeAnnotation
-    })
+    }, typeParameters)
   }
 
-  function getWrappedAssignmentWithTypeCheckAST(node, typeAnnotation) {
+  function getWrappedAssignmentWithTypeCheckAST(node, typeAnnotation, typeParameters) {
     return getAssertCallExpression({
       id: node.right,
       name: t.stringLiteral(node.left.name || generate(node.left, { concise: true }).code),
       annotation: typeAnnotation
-    })
+    }, typeParameters)
   }
 
   function findTypeAnnotationInObjectPattern(name, objectPattern, objectTypeAnnotation) {
@@ -879,7 +879,7 @@ export default function ({ types: t, template }) {
         const node = path.node
         const typeParameters = getTypeParameters(node)
         path.traverse({
-          Function({ node }) {
+          'Function|VariableDeclaration|AssignmentExpression'({ node }) {
             node[TYPE_PARAMETERS_STORE_FIELD] = assign(typeParameters, node[TYPE_PARAMETERS_STORE_FIELD])
           }
         })
@@ -979,7 +979,8 @@ export default function ({ types: t, template }) {
             }
 
             hasAsserts = true
-            declarator.init = getWrappedVariableDeclaratorInitWithTypeCheckAST(declarator)
+            const typeParameters = node._typeParameters
+            declarator.init = getWrappedVariableDeclaratorInitWithTypeCheckAST(declarator, typeParameters)
           })
         }
         catch (error) {
@@ -1017,8 +1018,9 @@ export default function ({ types: t, template }) {
             return
           }
 
+          const typeParameters = node._typeParameters
           hasAsserts = true
-          node.right = getWrappedAssignmentWithTypeCheckAST(node, typeAnnotation)
+          node.right = getWrappedAssignmentWithTypeCheckAST(node, typeAnnotation, typeParameters)
         }
         catch (error) {
           buildCodeFrameError(path, error)
