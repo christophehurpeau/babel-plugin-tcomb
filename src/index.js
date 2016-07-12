@@ -978,6 +978,7 @@ export default function ({ types: t, template }) {
               return
             }
 
+            hasAsserts = true
             declarator.init = getWrappedVariableDeclaratorInitWithTypeCheckAST(declarator)
           })
         }
@@ -1016,6 +1017,7 @@ export default function ({ types: t, template }) {
             return
           }
 
+          hasAsserts = true
           node.right = getWrappedAssignmentWithTypeCheckAST(node, typeAnnotation)
         }
         catch (error) {
