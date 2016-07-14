@@ -422,7 +422,33 @@ export default function ({ types: t, template }) {
     return generate(id, { concise: true }).code
   }
 
+  function isSameType(node, annotationType) {
+    switch (annotationType) {
+      case 'BooleanTypeAnnotation':
+        return node.type === 'BooleanLiteral'
+
+      case 'NumberTypeAnnotation':
+        return node.type === 'NumericLiteral'
+
+      case 'StringTypeAnnotation':
+        return node.type === 'StringLiteral'
+
+      case 'NullLiteralTypeAnnotation':
+        return node.type === 'NullLiteral'
+
+      case 'VoidTypeAnnotation':
+        return node.type === 'Identifier' && node.name === 'undefined'
+    }
+
+    return false
+  }
+
   function getAssertCallExpression(id, annotation, typeParameters, name, optional) {
+    if (isSameType(id, annotation.type)) {
+      // no need to check
+      return id
+    }
+
     let type = getType(annotation, typeParameters)
     if (optional) {
       type = getMaybeCombinator(type)
