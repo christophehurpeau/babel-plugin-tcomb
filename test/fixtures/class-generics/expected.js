@@ -19,4 +19,3 @@ class D extends E {
     _assert(x, _t.Any, "x");
   }
 }
-

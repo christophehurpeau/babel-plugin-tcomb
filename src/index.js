@@ -295,8 +295,8 @@ export default function ({ types: t, template }) {
     return getExpressionFromGenericTypeAnnotation(annotation.typeParameters.params[0].argument.id)
   }
 
-  function isTypeParameter(name, typeParameters) {
-    return typeParameters && typeParameters.hasOwnProperty(name)
+  function getTypeParameter(name, typeParameters) {
+    return typeParameters && typeParameters.hasOwnProperty(name) ? typeParameters[name] : false
   }
 
   function isGlobalType(name) {
@@ -323,6 +323,18 @@ export default function ({ types: t, template }) {
     if (name === 'Object') {
       return getObjectType()
     }
+
+    const typeParameter = getTypeParameter(name, typeParameters)
+    if (typeParameter) {
+      // only bounded polymorphism is supported at the moment
+      if (typeParameter.bound)
+        return getType({
+          annotation: typeParameter.bound.typeAnnotation
+        })
+
+      return getAnyType()
+    }
+
     if (shouldReturnAnyType(name, typeParameters)) {
       return getAnyType()
     }
@@ -522,7 +534,7 @@ export default function ({ types: t, template }) {
   function getTypeParameters(node) {
     const typeParameters = {}
     if (node.typeParameters) {
-      node.typeParameters.params.forEach(param => typeParameters[getTypeParameterName(param)] = true)
+      node.typeParameters.params.forEach(param => typeParameters[getTypeParameterName(param)] = param)
     }
     return typeParameters
   }
