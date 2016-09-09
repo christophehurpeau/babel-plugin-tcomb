@@ -819,10 +819,6 @@ export default function ({ types: t, template }) {
 
         const node = path.node
 
-        if (node.kind !== 'const') {
-          return
-        }
-
         for (var i = 0, len = node.declarations.length ; i < len ; i++ ) {
           const declarator = node.declarations[i]
           const id = declarator.id
