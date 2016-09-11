@@ -1,5 +1,9 @@
 let a: string = 's1';
 let aa: ?string = 's1';
+
+let aaa: string = s1;
+let aaaa: ?string = s1;
+
 let b = 's2';
 
 let [c]: Array<number> = [1, 2];

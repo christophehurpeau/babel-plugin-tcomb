@@ -1,6 +1,10 @@
 import _t from 'tcomb';
-let a = _assert('s1', _t.String, 'a');
-let aa = _assert('s1', _t.maybe(_t.String), 'aa');
+let a = 's1';
+let aa = 's1';
+
+let aaa = _assert(s1, _t.String, 'aaa');
+let aaaa = _assert(s1, _t.maybe(_t.String), 'aaaa');
+
 let b = 's2';
 
 let [c] = _assert([1, 2], _t.list(_t.Number), '[c]');
