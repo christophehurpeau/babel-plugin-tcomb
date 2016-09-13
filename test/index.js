@@ -218,6 +218,7 @@ describe('emit asserts for: ', () => {
           babelrc: false,
           plugins: [
             'syntax-async-functions',
+            'syntax-object-rest-spread',
             'syntax-flow',
             [plugin, {
               skipHelpers: true
