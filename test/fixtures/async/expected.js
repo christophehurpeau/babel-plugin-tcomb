@@ -1,7 +1,11 @@
-async function foo() {
-  return await bar();
+function foo() {
+  return _assert(async function () {
+    return await bar();
+  }.apply(this, arguments), _t.Promise, "return value");
 }
 
-const f = async () => {
-  await somePromise();
+const f = () => {
+  return _assert((async () => {
+    await somePromise();
+  })(), _t.Promise, "return value");
 };

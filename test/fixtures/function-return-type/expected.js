@@ -3,23 +3,15 @@ function foo(x, y) {
 
   _assert(y, _t.String, "y");
 
-  const ret = function (x, y) {
+  return _assert(function () {
     return x + y;
-  }.call(this, x, y);
-
-  _assert(ret, _t.String, "return value");
-
-  return ret;
+  }.apply(this, arguments), _t.String, "return value");
 }
 
 function bar(x, y) {
   _assert(y, _t.String, "y");
 
-  const ret = function (x, y) {
+  return _assert(function () {
     return x + y;
-  }.call(this, x, y);
-
-  _assert(ret, _t.String, "return value");
-
-  return ret;
+  }.apply(this, arguments), _t.String, "return value");
 }

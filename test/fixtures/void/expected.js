@@ -1,17 +1,9 @@
 import t from 'tcomb';
 
 function foo() {
-  const ret = function () {}.call(this);
-
-  _assert(ret, _t.Nil, 'return value');
-
-  return ret;
+  return _assert(void 0, _t.Nil, 'return value');
 }
 
 function bar() {
-  const ret = function () {}.call(this);
-
-  _assert(ret, _t.Nil, 'return value');
-
-  return ret;
+  return _assert(void 0, _t.Nil, 'return value');
 }
