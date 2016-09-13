@@ -7,13 +7,9 @@ const User = _t.interface({
 export function getUser(userId) {
   _assert(userId, _t.String, 'userId');
 
-  const ret = function (userId) {
+  return _assert(function () {
     return axios.get('').then(p => _assert(p.data, User, 'p.data'));
-  }.call(this, userId);
-
-  _assert(ret, _t.Promise, 'return value');
-
-  return ret;
+  }.apply(this, arguments), _t.Promise, 'return value');
 }
 
 const a = _assert('a string', A, '\'a string\'');
@@ -22,11 +18,7 @@ const b = _assert({}, B, '{}');
 function coerce(a) {
   _assert(a, _t.Any, 'a');
 
-  const ret = function (a) {
+  return _assert(function () {
     return _assert(_assert(a, _t.Any, 'a'), _t.Any, '(a: any)');
-  }.call(this, a);
-
-  _assert(ret, _t.Any, 'return value');
-
-  return ret;
+  }.apply(this, arguments), _t.Any, 'return value');
 }

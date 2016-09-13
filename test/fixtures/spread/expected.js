@@ -15,9 +15,5 @@ function baz(x, ...rest) {
 
   _assert(rest, _t.maybe(_t.list(_t.String)), "rest");
 
-  const ret = function (x, ...rest) {}.call(this, x, ...rest);
-
-  _assert(ret, _t.String, "return value");
-
-  return ret;
+  return _assert(void 0, _t.String, "return value");
 }

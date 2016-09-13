@@ -6,18 +6,14 @@ function foo(x) {
     })
   }), "x");
 
-  const ret = function (x) {
+  return _assert(function () {
     return { baz: foo, a: { bob: bar } };
-  }.call(this, x);
-
-  _assert(ret, _t.interface({
+  }.apply(this, arguments), _t.interface({
     baz: _t.Boolean,
     a: _t.interface({
       bob: _t.String
     })
   }), "return value");
-
-  return ret;
 }
 
 function getFullName(person) {

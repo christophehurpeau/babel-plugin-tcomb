@@ -5,11 +5,7 @@ function sum(a, b) {
 
   _assert(b, Number, 'b');
 
-  const ret = function (a, b) {
+  return _assert(function () {
     return a + b;
-  }.call(this, a, b);
-
-  _assert(ret, Number, 'return value');
-
-  return ret;
+  }.apply(this, arguments), Number, 'return value');
 }

@@ -1,10 +1,6 @@
 import t from 'tcomb';
 function foo({ x: { y: foo, z: { bar } }, a: { bob } }) {
-  const ret = function ({ x: { y: foo, z: { bar } }, a: { bob } }) {
+  return _assert(function () {
     return bar;
-  }.call(this, { x: { y: foo, z: { bar } }, a: { bob } });
-
-  _assert(ret, t.String, 'return value');
-
-  return ret;
+  }.apply(this, arguments), t.String, 'return value');
 }

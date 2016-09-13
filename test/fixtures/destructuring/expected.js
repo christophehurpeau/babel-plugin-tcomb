@@ -9,13 +9,9 @@ function foo({ x }) {
 }
 
 function bar({ a } = {}) {
-  const ret = function ({ a }) {
+  return _assert(function () {
     return x;
-  }.call(this, { a });
-
-  _assert(ret, _t.String, "return value");
-
-  return ret;
+  }.apply(this, arguments), _t.String, "return value");
 }
 
 function baz({ x: { y = "ex" } } = {}) {
@@ -30,4 +26,16 @@ function baz({ x: { y = "ex" } } = {}) {
   }), "{ x: { y } }");
 
   return x;
+}
+
+function defaultWithReturnTypeAndDefault({ x = "x" } = {}) {
+  _assert({
+    x
+  }, _t.interface({
+    x: _t.String
+  }), "{ x }");
+
+  return _assert(function () {
+    return x;
+  }.apply(this, arguments), _t.String, "return value");
 }

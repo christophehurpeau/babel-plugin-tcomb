@@ -128,6 +128,7 @@ export default function ({ types: t, template }) {
   const booleanId = t.identifier('Boolean')
   const anyId = t.identifier('Any')
   const promiseId = t.identifier('Promise')
+  const VOID_0 = t.unaryExpression("void", t.numericLiteral(0), true)
 
   function getListCombinator(type, name) {
     return callCombinator(listId, [type], name)
@@ -512,53 +513,33 @@ export default function ({ types: t, template }) {
     return params.map(param => getAssert(param, typeParameters))
   }
 
-  function getParamName(param) {
-    if (t.isAssignmentPattern(param)) {
-      return getParamName(param.left)
-    }
-    else if (t.isRestElement(param)) {
-      return t.restElement(param.argument)
-    }
-    else if (t.isObjectPattern(param)) {
-      return param
-    }
-    return t.identifier(param.name)
-  }
+  function getWrappedFunctionReturnWithTypeCheck(isArrow, isAsync, node, typeParameters) {
+    let id
 
-  function getWrappedFunctionReturnWithTypeCheck(node, typeParameters) {
-    const params = node.params.map(getParamName)
-    const callParams = params.map(param => {
-      if (t.isObjectPattern(param)) {
-        return t.objectExpression(param.properties)
-      }
-      else if (t.isRestElement(param)) {
-        return t.spreadElement(param.argument)
-      }
-      return param
-    })
+    if (node.body.body.length === 0) {
+      id = VOID_0
+    } else {
+      const f = isArrow ? t.arrowFunctionExpression([], t.blockStatement(node.body.body))
+        : t.functionExpression(null, [], t.blockStatement(node.body.body))
 
-    const id = t.identifier('ret')
-    const assertAST = getAssert({
+      f[PROCESSED_FUNCTION_STORE_FIELD] = true
+
+      if (isAsync) {
+          f.async = true
+      }
+
+      id = isArrow ? t.callExpression(f, []) : t.callExpression(
+        t.memberExpression(f, t.identifier('apply')),
+        [t.identifier('this'), t.identifier('arguments')]
+      )
+    }
+
+    return t.returnStatement(getAssertCallExpression(
       id,
-      annotation: node.returnType.typeAnnotation,
-      name: t.stringLiteral('return value')
-    }, typeParameters)
-
-    const f = t.functionExpression(null, params, node.body)
-    f[PROCESSED_FUNCTION_STORE_FIELD] = true
-    return [
-      t.variableDeclaration('const', [
-        t.variableDeclarator(
-          id,
-          t.callExpression(
-            t.memberExpression(f, t.identifier('call')),
-            [t.identifier('this')].concat(callParams)
-          )
-        )
-      ]),
-      assertAST,
-      t.returnStatement(id)
-    ]
+      node.returnType.typeAnnotation,
+      typeParameters,
+      t.stringLiteral('return value')
+    ))
   }
 
   function getTypeParameterName(param) {
@@ -925,6 +906,8 @@ export default function ({ types: t, template }) {
 
         const node = path.node
 
+        if (node.kind === 'var') return
+
         for (var i = 0, len = node.declarations.length ; i < len ; i++ ) {
           const declarator = node.declarations[i]
           const id = declarator.id
@@ -1000,39 +983,51 @@ export default function ({ types: t, template }) {
         }
         node[PROCESSED_FUNCTION_STORE_FIELD] = true
 
-        let isAsync = false
         const typeParameters = assign(getTypeParameters(node), node[TYPE_PARAMETERS_STORE_FIELD])
 
         // store type parameters so we can read them later
         path.traverse({
           'Function|VariableDeclaration|TypeCastExpression'({ node }) {
             node[TYPE_PARAMETERS_STORE_FIELD] = assign(typeParameters, node[TYPE_PARAMETERS_STORE_FIELD])
-          },
-          AwaitExpression() {
-            isAsync = true
           }
         })
 
         try {
           const argumentChecks = getFunctionArgumentCheckExpressions(node, typeParameters)
 
-          if (node.returnType || argumentChecks.length > 0) {
-            // Firstly let's replace arrow function expressions into
-            // block statement return structures.
-            if (t.isArrowFunctionExpression(node) && node.expression) {
-              node.expression = false
-              node.body = t.blockStatement([t.returnStatement(node.body)])
+          if (node.returnType || argumentChecks.length !== 0) {
+            let isArrow = false
+            // Firstly let's replace arrow function
+            if (t.isArrowFunctionExpression(node)) {
+              isArrow = true
+              /* if (node.returnType && argumentChecks.length !== 0) {
+                // replace into normal function with right this
+                node.type = "FunctionExpression"
+                path.ensureBlock()
+                path.replaceWith(t.callExpression(
+                  t.memberExpression(node, t.identifier("bind")),
+                  [t.thisExpression()]
+                ))
+              } else */ if (node.expression && argumentChecks.length !== 0) {
+                // replace into block statement return structures
+                node.expression = false
+                node.body = t.blockStatement([t.returnStatement(node.body)])
+              }
             }
 
             // If we have a return type then we will wrap our entire function
             // body and insert a type check on the returned value.
-            if (node.returnType && !isAsync) {
+            if (node.returnType) {
               hasAsserts = true
-              path.get('body').replaceWithMultiple(getWrappedFunctionReturnWithTypeCheck(node, typeParameters))
-            }
-
-            // Prepend any argument checks to the top of our function body.
-            if (argumentChecks.length > 0) {
+              node.body.body = [
+                ...argumentChecks,
+                getWrappedFunctionReturnWithTypeCheck(isArrow, node.async, node, typeParameters)
+              ]
+              if (node.async) {
+                node.async = false
+              }
+            } else if (argumentChecks.length > 0) {
+              // Prepend any argument checks to the top of our function body.
               hasAsserts = true
               node.body.body.unshift(...argumentChecks)
             }
