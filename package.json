@@ -1,5 +1,5 @@
 {
-  "name": "babel-plugin-tcomb",
+  "name": "babel-plugin-tcomb-forked",
   "version": "0.3.12",
   "description": "Babel plugin for static and runtime type checking using Flow and tcomb",
   "main": "lib/index.js",
@@ -14,16 +14,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/gcanti/babel-plugin-tcomb.git"
+    "url": "https://github.com/christophehurpeau/babel-plugin-tcomb.git"
   },
   "author": "Giulio Canti <giulio.canti@gmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/gcanti/babel-plugin-tcomb/issues"
   },
-  "homepage": "https://github.com/gcanti/babel-plugin-tcomb",
+  "homepage": "https://github.com/christophehurpeau/babel-plugin-tcomb",
   "peerDependencies": {
-    "tcomb": "^3.2.2"
+    "tcomb-forked": "^3.2.2"
   },
   "devDependencies": {
     "babel-cli": "6.9.0",
@@ -36,7 +36,7 @@
     "benchmark": "^2.1.0",
     "eslint": "2.9.0",
     "mocha": "2.4.5",
-    "tcomb": "christophehurpeau/tcomb"
+    "tcomb-forked": "^3.2.2"
   },
   "tags": [
     "flow",

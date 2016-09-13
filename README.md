@@ -6,6 +6,20 @@ Babel plugin for static and runtime type checking using Flow and tcomb.
 
 [tcomb](https://github.com/gcanti/tcomb) is a library for Node.js and the browser which allows you to check the types of JavaScript values at runtime with a simple and concise syntax. It's great for Domain Driven Design and for adding safety to your internal code.
 
+# Fork
+
+
+This a fork from the original [tcomb](https://www.npmjs.org/package/tcomb)
+
+Differences:
+
+- You have to use [tcomb-forked](https://github.com/christophehurpeau/tcomb)
+- [Avoid checks on confident assignment](https://github.com/gcanti/babel-plugin-tcomb/pull/108)
+- [Bounded polymorphism partial support](https://github.com/gcanti/babel-plugin-tcomb/pull/109)
+- [Variable check also let](https://github.com/gcanti/babel-plugin-tcomb/pull/111)
+- [Assignment type checking](https://github.com/gcanti/babel-plugin-tcomb/pull/112) 
+- [Refacto function return type check](https://github.com/christophehurpeau/babel-plugin-tcomb/pull/1) 
+
 # Why?
 
 **Runtime type checking (tcomb)**
