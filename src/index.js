@@ -1014,25 +1014,28 @@ export default function ({ types: t, template }) {
         })
 
         try {
-          // Firstly let's replace arrow function expressions into
-          // block statement return structures.
-          if (t.isArrowFunctionExpression(node) && node.expression) {
-            node.expression = false
-            node.body = t.blockStatement([t.returnStatement(node.body)])
-          }
-
-          // If we have a return type then we will wrap our entire function
-          // body and insert a type check on the returned value.
-          if (node.returnType && !isAsync) {
-            hasAsserts = true
-            path.get('body').replaceWithMultiple(getWrappedFunctionReturnWithTypeCheck(node, typeParameters))
-          }
-
-          // Prepend any argument checks to the top of our function body.
           const argumentChecks = getFunctionArgumentCheckExpressions(node, typeParameters)
-          if (argumentChecks.length > 0) {
-            hasAsserts = true
-            node.body.body.unshift(...argumentChecks)
+
+          if (node.returnType || argumentChecks.length > 0) {
+            // Firstly let's replace arrow function expressions into
+            // block statement return structures.
+            if (t.isArrowFunctionExpression(node) && node.expression) {
+              node.expression = false
+              node.body = t.blockStatement([t.returnStatement(node.body)])
+            }
+
+            // If we have a return type then we will wrap our entire function
+            // body and insert a type check on the returned value.
+            if (node.returnType && !isAsync) {
+              hasAsserts = true
+              path.get('body').replaceWithMultiple(getWrappedFunctionReturnWithTypeCheck(node, typeParameters))
+            }
+
+            // Prepend any argument checks to the top of our function body.
+            if (argumentChecks.length > 0) {
+              hasAsserts = true
+              node.body.body.unshift(...argumentChecks)
+            }
           }
         }
         catch (error) {

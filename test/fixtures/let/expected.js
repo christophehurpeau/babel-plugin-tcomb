@@ -37,6 +37,4 @@ class Klass1 {
 
 const Predicate = _t.Function;
 
-let i = _assert(() => {
-  return true;
-}, Predicate, 'i');
+let i = _assert(() => true, Predicate, 'i');
