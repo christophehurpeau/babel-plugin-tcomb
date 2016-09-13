@@ -11,6 +11,7 @@
 import generate from 'babel-generator'
 import find from 'lodash.find'
 
+const TCOMB_LIBRARY = 'tcomb-forked'
 const PLUGIN_NAME = 'babel-plugin-tcomb'
 const TYPE_PARAMETERS_STORE_FIELD = '__babel_plugin_tcomb_typeParametersStoreField'
 const TYPE_VARIABLE_STORE_FIELD = '__babel_plugin_tcomb_typeVariableStoreField'
@@ -798,7 +799,7 @@ export default function ({ types: t, template }) {
 
           if (isImportTcombRequired) {
             path.node.body.unshift(
-              t.importDeclaration([t.importDefaultSpecifier(tcombId)], t.stringLiteral('tcomb'))
+              t.importDeclaration([t.importDefaultSpecifier(tcombId)], t.stringLiteral(TCOMB_LIBRARY))
             )
           }
 

@@ -1,4 +1,4 @@
-import _t from "tcomb";
+import _t from "tcomb-forked";
 
 const A = _t.interface({
   a: _t.String

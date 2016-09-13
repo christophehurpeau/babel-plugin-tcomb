@@ -22,7 +22,7 @@ describe('_assert helper', () => {
     const source = `function _assert(){}
 function foo(x: string) {}
 `
-    const expected = `import _t from "tcomb";
+    const expected = `import _t from "tcomb-forked";
 function _assert() {}
 function foo(x: string) {
   _assert2(x, _t.String, "x");

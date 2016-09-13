@@ -1,4 +1,4 @@
-import _t from "tcomb";
+import _t from "tcomb-forked";
 
 const _types = require("types");
 

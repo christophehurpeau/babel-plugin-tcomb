@@ -1,4 +1,4 @@
-import _t from 'tcomb';
+import _t from 'tcomb-forked';
 
 const User = _t.interface({
   name: _t.String

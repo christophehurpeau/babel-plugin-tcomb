@@ -1,4 +1,4 @@
-import _t from "tcomb";
+import _t from "tcomb-forked";
 let a = _assert(s1, _t.String, "a");
 a = _assert(s2, _t.String, "a");
 let aa = _assert(s1, _t.maybe(_t.String), "aa");

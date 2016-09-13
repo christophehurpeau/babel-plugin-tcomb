@@ -1,4 +1,4 @@
-import _t from "tcomb";
+import _t from "tcomb-forked";
 class A {
   foo(x) {
     _assert(x, _t.Any, "x");

@@ -1,4 +1,4 @@
-import _t from 'tcomb';
+import _t from 'tcomb-forked';
 let a = 's1';
 let aa = 's1';
 
