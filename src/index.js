@@ -480,6 +480,9 @@ export default function ({ types: t, template }) {
   function stripDefaults(node) {
     if (t.isObjectPattern(node)) {
       return t.objectExpression(node.properties.map(p => {
+        if (t.isRestProperty(p)) {
+          return t.objectProperty(p.argument, p.argument, false, true)
+        }
         return t.objectProperty(p.key, stripDefaults(p.value), false, true)
       }))
     }

@@ -10,7 +10,11 @@ function baz({x: {y = "ex"}}: {x: {y?: string}} = {}) {
   return x
 }
 
-function defaultWithReturnTypeAndDefault({x = "x"}: {x: string } = {}): string {
+function defaultWithReturnType({x = "x"}: {x: string } = {}): string {
+  return x
+}
+
+function rest({ x, ...y }: { x: string, y: Array<string> }): string {
   return x
 }
 
