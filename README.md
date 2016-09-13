@@ -19,6 +19,7 @@ Differences:
 - [Variable check also let](https://github.com/gcanti/babel-plugin-tcomb/pull/111)
 - [Assignment type checking](https://github.com/gcanti/babel-plugin-tcomb/pull/112) 
 - [Refacto function return type check](https://github.com/christophehurpeau/babel-plugin-tcomb/pull/1) 
+- [Fix object rest spread](https://github.com/christophehurpeau/babel-plugin-tcomb/pull/2) 
 
 # Why?
 
