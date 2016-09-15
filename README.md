@@ -9,7 +9,7 @@ Babel plugin for static and runtime type checking using Flow and tcomb.
 # Fork
 
 
-This a fork from the original [tcomb](https://www.npmjs.org/package/tcomb)
+This a fork from the original [babel-plugin-tcomb](https://www.npmjs.org/package/babel-plugin-tcomb)
 
 Differences:
 
