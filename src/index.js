@@ -72,9 +72,7 @@ export default function ({ types: t, template }) {
           type(x, [name + ': ' + tcombId.getTypeName(type)]);
           tcombId.fail(message());
         }
-        return type(x)
-      }
-      if (!(x instanceof type)) {
+      } else if (!(x instanceof type)) {
         tcombId.fail(message());
       }
       return x;
