@@ -20,6 +20,7 @@ Differences:
 - [Assignment type checking](https://github.com/gcanti/babel-plugin-tcomb/pull/112) 
 - [Refacto function return type check](https://github.com/christophehurpeau/babel-plugin-tcomb/pull/1) 
 - [Fix object rest spread](https://github.com/christophehurpeau/babel-plugin-tcomb/pull/2) 
+- [Revert Immutability not working](https://github.com/gcanti/babel-plugin-tcomb/commit/a7def9ecff3e75ab32687e1787e05c78d5fb4eeb) 
 
 # Why?
 
