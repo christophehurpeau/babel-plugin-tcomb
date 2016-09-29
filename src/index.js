@@ -100,9 +100,17 @@ export default function ({ types: t, template }) {
   // combinators
   //
 
-  function addTypeName(combinatorArguments, typeName) {
+  function addTypeName(combinatorArguments, typeName, exact) {
     if (t.isStringLiteral(typeName)) {
-      combinatorArguments.push(typeName)
+      if (exact) {
+        combinatorArguments.push(t.objectExpression([
+          t.objectProperty(t.identifier('name'), typeName),
+          t.objectProperty(t.identifier('strict'), t.booleanLiteral(true))
+        ]))
+      }
+      else {
+        combinatorArguments.push(typeName)
+      }
     }
     return combinatorArguments
   }
@@ -164,8 +172,11 @@ export default function ({ types: t, template }) {
     return callCombinator(refinementId, [type, predicate], name)
   }
 
-  function getInterfaceCombinator(props, name) {
-    return callCombinator(interfaceId, [props], name)
+  function getInterfaceCombinator(props, name, exact) {
+    return t.callExpression(
+      t.memberExpression(tcombId, interfaceId),
+      addTypeName([props], name, exact)
+    )
   }
 
   function getDeclareCombinator(name) {
@@ -313,11 +324,6 @@ export default function ({ types: t, template }) {
     return globals && globals.hasOwnProperty(name)
   }
 
-  function shouldReturnAnyType(name) {
-     // this plugin doesn't handle generics by design
-    return isGlobalType(name) || flowMagicTypes.hasOwnProperty(name)
-  }
-
   function getGenericTypeAnnotation(annotation, typeParameters, typeName) {
     const name = annotation.id.name
     if (name === 'Array') {
@@ -333,8 +339,16 @@ export default function ({ types: t, template }) {
     if (name === 'Object') {
       return getObjectType()
     }
+    if (name === '$Exact') {
+      return getInterfaceCombinator(getObjectExpression(annotation.typeParameters.params[0].properties, typeParameters), typeName, true)
+    }
     if (name === 'Promise') {
       return getPromiseType()
+    }
+
+    // this plugin doesn't handle generics by design
+    if (isGlobalType(name) || flowMagicTypes.hasOwnProperty(name)) {
+      return getAnyType()
     }
 
     const typeParameter = getTypeParameter(name, typeParameters)
@@ -344,10 +358,6 @@ export default function ({ types: t, template }) {
         return getType(typeParameter.bound.typeAnnotation, typeParameters)
       }
 
-      return getAnyType()
-    }
-
-    if (shouldReturnAnyType(name)) {
       return getAnyType()
     }
     const gta = getExpressionFromGenericTypeAnnotation(annotation.id)
