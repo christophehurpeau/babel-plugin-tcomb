@@ -6,3 +6,8 @@ const f = x => {
     return x;
   })(), t.String, 'return value');
 };
+const b = ({ v }) => {
+  return _assert((() => {
+    return v;
+  })(), _t.list(_t.Object), 'return value');
+};

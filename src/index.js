@@ -1022,7 +1022,7 @@ export default function ({ types: t, template }) {
                   t.memberExpression(node, t.identifier("bind")),
                   [t.thisExpression()]
                 ))
-              } else */ if (node.expression && argumentChecks.length !== 0) {
+              } else */ if (node.expression) {
                 // replace into block statement return structures
                 node.expression = false
                 node.body = t.blockStatement([t.returnStatement(node.body)])
