@@ -6,3 +6,6 @@ function bar(x, y: string): string {
   return x + y;
 }
 
+function f({x = "ex"}): void {
+  console.log({x});
+}

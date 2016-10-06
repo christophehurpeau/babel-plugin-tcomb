@@ -15,3 +15,9 @@ function bar(x, y) {
     return x + y;
   }.apply(this, arguments), _t.String, "return value");
 }
+
+function f({ x = "ex" }) {
+  return _assert(function () {
+    console.log({ x });
+  }.apply(this, arguments), _t.Nil, "return value");
+}
