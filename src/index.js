@@ -24,7 +24,8 @@ const flowMagicTypes = {
   '$Keys': true,
   '$Diff': true,
   '$Abstract': true,
-  '$Subtype': true
+  '$Subtype': true,
+  '$ObjMap': true
 }
 
 // plugin magic types
@@ -549,7 +550,7 @@ export default function ({ types: t, template }) {
 
       id = isArrow ? t.callExpression(f, []) : t.callExpression(
         t.memberExpression(f, t.identifier('apply')),
-        [t.identifier('this'), t.identifier('arguments')]
+        [t.thisExpression(), t.identifier('arguments')]
       )
     }
 
@@ -704,12 +705,13 @@ export default function ({ types: t, template }) {
       )
     ])
     return [importNode].concat(node.specifiers.map(specifier => {
+      const isDefaultImport = specifier.type === 'ImportDefaultSpecifier'
       return t.variableDeclaration('const', [
         t.variableDeclarator(
           specifier.local,
           t.logicalExpression(
             '||',
-            t.memberExpression(typesId, specifier.imported),
+            t.memberExpression(typesId, isDefaultImport ? t.identifier('default') : specifier.imported),
             getAnyType()
           )
         )

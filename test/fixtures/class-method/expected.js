@@ -8,3 +8,13 @@ class A {
     }.apply(this, arguments), t.String, 'return value');
   }
 }
+
+class B {
+  bar() {
+    [].forEach(n => {
+      return _assert((() => {
+        console.log(this);
+      })(), _t.Nil, 'return value');
+    });
+  }
+}
