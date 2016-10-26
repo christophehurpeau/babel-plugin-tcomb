@@ -512,18 +512,17 @@ export default function ({ types: t, template }) {
     if (t.isAssignmentPattern(param) && param.left.typeAnnotation) {
       return getParam(param.left, i)
     }
-    else if (param.typeAnnotation) {
-      if (t.isRestElement(param)) {
-        return {
-          id: param.argument,
-          optional: param.optional,
-          annotation: param.typeAnnotation.typeAnnotation
-        }
-      }
+    if (param.typeAnnotation) {
+      const id = t.isObjectPattern(param) ?
+        t.memberExpression(t.identifier('arguments'), t.identifier(i), true) : t.isRestElement(param) ?
+        param.argument :
+        param
+
       return {
-        id: stripDefaults(param),
+        id,
         optional: param.optional,
-        annotation: param.typeAnnotation.typeAnnotation
+        annotation: param.typeAnnotation.typeAnnotation,
+        name: t.stringLiteral(nodeToString(t.isRestElement(param) ? param.argument : param))
       }
     }
   }
@@ -698,12 +697,9 @@ export default function ({ types: t, template }) {
     const node = path.node
     const source = node.source.value
     const typesId = path.scope.generateUidIdentifier(source)
-    const importNode = t.variableDeclaration('const', [
-      t.variableDeclarator(
-        typesId,
-        t.callExpression(t.identifier('require'), [t.stringLiteral(source)])
-      )
-    ])
+    const importNode = t.importDeclaration([
+      t.importNamespaceSpecifier(typesId)
+    ], t.stringLiteral(source))
     return [importNode].concat(node.specifiers.map(specifier => {
       const isDefaultImport = specifier.type === 'ImportDefaultSpecifier'
       return t.variableDeclaration('const', [
@@ -845,15 +841,8 @@ export default function ({ types: t, template }) {
       ImportDeclaration(path) {
         const node = path.node
         if (node.importKind === 'type') {
-          const source = node.source.value
-          if (isExternalImportDeclaration(source)) {
-            hasTypes = true
-            path.replaceWithMultiple(getExternalImportDeclaration(path))
-          }
-          else {
-            // prevent transform-flow-strip-types
-            node.importKind = 'value'
-          }
+          // transform into normal import
+          node.importKind = 'value'
         }
       },
 
