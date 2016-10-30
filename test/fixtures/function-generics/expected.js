@@ -3,9 +3,9 @@ function foo(x) {
 }
 
 function bar(x) {
-  return y => {
+  return function (y) {
     _assert(y, _t.Any, "y");
 
     return y;
-  };
+  }.bind(this);
 }

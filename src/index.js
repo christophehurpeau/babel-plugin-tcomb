@@ -493,21 +493,6 @@ export default function ({ types: t, template }) {
     return t.expressionStatement(getAssertCallExpression(id, annotation, typeParameters, name, optional))
   }
 
-  function stripDefaults(node) {
-    if (t.isObjectPattern(node)) {
-      return t.objectExpression(node.properties.map(p => {
-        if (t.isRestProperty(p)) {
-          return t.objectProperty(p.argument, p.argument, false, true)
-        }
-        return t.objectProperty(p.key, stripDefaults(p.value), false, true)
-      }))
-    }
-    else if (t.isAssignmentPattern(node)) {
-      return stripDefaults(node.left)
-    }
-    return node
-  }
-
   function getParam(param, i) {
     if (t.isAssignmentPattern(param) && param.left.typeAnnotation) {
       return getParam(param.left, i)
@@ -528,7 +513,7 @@ export default function ({ types: t, template }) {
   }
 
   function getFunctionArgumentCheckExpressions(node, typeParameters) {
-    const params = node.params.map(getParam).filter(x => x)
+    const params = node.params.map(getParam).filter(Boolean)
     return params.map(param => getAssert(param, typeParameters))
   }
 
@@ -1010,7 +995,7 @@ export default function ({ types: t, template }) {
             // Firstly let's replace arrow function
             if (t.isArrowFunctionExpression(node)) {
               isArrow = true
-              /* if (node.returnType && argumentChecks.length !== 0) {
+              if (argumentChecks.length !== 0) {
                 // replace into normal function with right this
                 node.type = "FunctionExpression"
                 path.ensureBlock()
@@ -1018,7 +1003,7 @@ export default function ({ types: t, template }) {
                   t.memberExpression(node, t.identifier("bind")),
                   [t.thisExpression()]
                 ))
-              } else */ if (node.expression) {
+              } else if (node.expression) {
                 // replace into block statement return structures
                 node.expression = false
                 node.body = t.blockStatement([t.returnStatement(node.body)])
