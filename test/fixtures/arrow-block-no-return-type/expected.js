@@ -1,6 +1,6 @@
 import t from 'tcomb';
-const f = function (x) {
+const f = x => {
   _assert(x, t.String, 'x');
 
   return x;
-}.bind(this);
+};

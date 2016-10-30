@@ -493,21 +493,33 @@ export default function ({ types: t, template }) {
     return t.expressionStatement(getAssertCallExpression(id, annotation, typeParameters, name, optional))
   }
 
+  function stripDefaults(node) {
+    if (t.isObjectPattern(node)) {
+      return t.objectExpression(node.properties.map(p => {
+        if (t.isRestProperty(p)) {
+          return t.objectProperty(p.argument, p.argument, false, true)
+        }
+        return t.objectProperty(p.key, stripDefaults(p.value), false, true)
+      }))
+    }
+    else if (t.isAssignmentPattern(node)) {
+      return stripDefaults(node.left)
+    }
+    return node
+  }
+
   function getParam(param, i) {
     if (t.isAssignmentPattern(param) && param.left.typeAnnotation) {
       return getParam(param.left, i)
     }
     if (param.typeAnnotation) {
-      const id = t.isObjectPattern(param) ?
-        t.memberExpression(t.identifier('arguments'), t.identifier(i), true) : t.isRestElement(param) ?
-        param.argument :
-        param
+      const isRest = t.isRestElement(param)
 
       return {
-        id,
+        id: isRest ? param.argument : stripDefaults(param),
         optional: param.optional,
         annotation: param.typeAnnotation.typeAnnotation,
-        name: t.stringLiteral(nodeToString(t.isRestElement(param) ? param.argument : param))
+        name: t.stringLiteral(nodeToString(isRest ? param.argument : param))
       }
     }
   }
@@ -672,32 +684,6 @@ export default function ({ types: t, template }) {
 
   function isRecursiveType(node) {
     return node[IS_RECURSIVE_STORE_FIELD] || hasRecursiveComment(node)
-  }
-
-  function isExternalImportDeclaration(source) {
-    return !(source.indexOf('./') === 0 || source.indexOf('../') === 0)
-  }
-
-  function getExternalImportDeclaration(path) {
-    const node = path.node
-    const source = node.source.value
-    const typesId = path.scope.generateUidIdentifier(source)
-    const importNode = t.importDeclaration([
-      t.importNamespaceSpecifier(typesId)
-    ], t.stringLiteral(source))
-    return [importNode].concat(node.specifiers.map(specifier => {
-      const isDefaultImport = specifier.type === 'ImportDefaultSpecifier'
-      return t.variableDeclaration('const', [
-        t.variableDeclarator(
-          specifier.local,
-          t.logicalExpression(
-            '||',
-            t.memberExpression(typesId, isDefaultImport ? t.identifier('default') : specifier.imported),
-            getAnyType()
-          )
-        )
-      ])
-    }))
   }
 
   function isRuntimeTypeIntrospection(node) {
@@ -995,7 +981,7 @@ export default function ({ types: t, template }) {
             // Firstly let's replace arrow function
             if (t.isArrowFunctionExpression(node)) {
               isArrow = true
-              if (argumentChecks.length !== 0) {
+              /* if (argumentChecks.length !== 0) {
                 // replace into normal function with right this
                 node.type = "FunctionExpression"
                 path.ensureBlock()
@@ -1003,7 +989,7 @@ export default function ({ types: t, template }) {
                   t.memberExpression(node, t.identifier("bind")),
                   [t.thisExpression()]
                 ))
-              } else if (node.expression) {
+              } else */ if (node.expression) {
                 // replace into block statement return structures
                 node.expression = false
                 node.body = t.blockStatement([t.returnStatement(node.body)])

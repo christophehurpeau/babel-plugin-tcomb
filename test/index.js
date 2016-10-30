@@ -211,25 +211,38 @@ describe('emit asserts for: ', () => {
     if (!(caseName in { 'without-import': 1 })) {
       // return
     }
-    it(`should ${caseName.split('-').join(' ')}`, () => {
-      const fixtureDir = path.join(fixturesDir, caseName)
-      const actual = babel.transformFileSync(
-        path.join(fixtureDir, 'actual.js'), {
-          babelrc: false,
-          plugins: [
-            'syntax-async-functions',
-            'syntax-object-rest-spread',
-            'syntax-flow',
-            [plugin, {
-              skipHelpers: true
-            }],
-            'transform-flow-strip-types'
-          ]
-        }
-      ).code
-      const expected = fs.readFileSync(path.join(fixtureDir, 'expected.js')).toString()
 
-      assert.equal(trim(actual), trim(expected))
+    const fixtureDir = path.join(fixturesDir, caseName);
+
+    ['expected', 'expected-es2015'].forEach(kind => {
+      const presets = kind === 'expected-es2015' ? ['es2015'] : []
+      let expected
+
+      try {
+        expected = fs.readFileSync(path.join(fixtureDir, `${kind}.js`)).toString()
+      } catch (err) {
+        return
+      }
+
+      it(`should ${caseName.split('-').join(' ')} ${presets.join(' ')}`, () => {
+        const actual = babel.transformFileSync(
+          path.join(fixtureDir, 'actual.js'), {
+            babelrc: false,
+            presets: presets,
+            plugins: [
+              'syntax-async-functions',
+              'syntax-object-rest-spread',
+              'syntax-flow',
+              [plugin, {
+                skipHelpers: true
+              }],
+              'transform-flow-strip-types'
+            ]
+          }
+        ).code
+
+        assert.equal(trim(actual), trim(expected))
+      })
     })
   })
 })

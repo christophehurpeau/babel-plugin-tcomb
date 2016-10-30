@@ -1,5 +1,7 @@
 function foo({ x }) {
-  _assert(arguments[0], _t.interface({
+  _assert({
+    x
+  }, _t.interface({
     x: _t.String
   }), "{ x }");
 
@@ -13,7 +15,11 @@ function bar({ a } = {}) {
 }
 
 function baz({ x: { y = "ex" } } = {}) {
-  _assert(arguments[0], _t.interface({
+  _assert({
+    x: {
+      y
+    }
+  }, _t.interface({
     x: _t.interface({
       y: _t.maybe(_t.String)
     })
@@ -23,7 +29,9 @@ function baz({ x: { y = "ex" } } = {}) {
 }
 
 function defaultWithReturnType({ x = "x" } = {}) {
-  _assert(arguments[0], _t.interface({
+  _assert({
+    x
+  }, _t.interface({
     x: _t.String
   }), "{ x = \"x\" }");
 
@@ -33,7 +41,10 @@ function defaultWithReturnType({ x = "x" } = {}) {
 }
 
 function rest({ x, ...y }) {
-  _assert(arguments[0], _t.interface({
+  _assert({
+    x,
+    y
+  }, _t.interface({
     x: _t.String,
     y: _t.list(_t.String)
   }), "{ x, ...y }");
