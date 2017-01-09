@@ -9,7 +9,6 @@
  */
 
 import generate from 'babel-generator'
-import find from 'lodash.find'
 
 const TCOMB_LIBRARY = 'tcomb-forked'
 const PLUGIN_NAME = 'babel-plugin-tcomb'
@@ -709,7 +708,9 @@ export default function ({ types: t, template }) {
     }
 
     for (let property of objectPattern.properties) {
-      const typeAnnotation = find(objectTypeAnnotation.properties, propType => propType.key.name === property.key.name)
+      const typeAnnotation = objectTypeAnnotation.properties.find(propType => (
+        propType.key.name === property.key.name
+      ))
       if (!typeAnnotation) {
         continue
       }
