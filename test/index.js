@@ -29,18 +29,18 @@ function foo(x: string) {
 }
 
 function _assert2(x, type, name) {
-  function message() {
-    return 'Invalid value ' + _t.stringify(x) + ' supplied to ' + name + ' (expected a ' + _t.getTypeName(type) + ')';
+  if (false) {
+    _t.fail = function (message) {
+      console.warn(message);
+    };
   }
 
-  if (_t.isType(type)) {
+  if (_t.isType(type) && type.meta.kind !== 'struct') {
     if (!type.is(x)) {
       type(x, [name + ': ' + _t.getTypeName(type)]);
-
-      _t.fail(message());
     }
   } else if (!(x instanceof type)) {
-    _t.fail(message());
+    _t.fail('Invalid value ' + _t.stringify(x) + ' supplied to ' + name + ' (expected a ' + _t.getTypeName(type) + ')');
   }
 
   return x;
@@ -208,7 +208,7 @@ describe('emit asserts for: ', () => {
     if ((caseName in skipTests)) {
       return
     }
-    if (!(caseName in { 'without-import': 1 })) {
+    if (!(caseName in { 'destructuring': 1 })) {
       // return
     }
 
@@ -231,12 +231,12 @@ describe('emit asserts for: ', () => {
             presets: presets,
             plugins: [
               'syntax-async-functions',
-              'syntax-object-rest-spread',
               'syntax-flow',
               [plugin, {
                 skipHelpers: true
               }],
-              'transform-flow-strip-types'
+              'transform-flow-strip-types',
+              `${kind === 'expected-es2015' ? 'transform' : 'syntax'}-object-rest-spread`
             ]
           }
         ).code

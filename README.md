@@ -44,11 +44,14 @@ You can add type safety to your untyped codebase gradually:
 - then, when you feel comfortable, turn on `Flow` and unleash the power of static type checking
 - third, for even more type safety, define your refinement types and validate the IO boundary
 
-# Boilerplate
+# Fork
 
-Boilerplate showing what you can get in terms of type safety with babel-plugin-tcomb:
+[Here](https://github.com/christophehurpeau/babel-plugin-tcomb) you can find a fork of this plugin that provides the following additional features:
 
-[babel-plugin-tcomb-boilerplate](https://github.com/gcanti/babel-plugin-tcomb-boilerplate)
+- Avoid checks on confident assignment
+- Bounded polymorphism partial support
+- `let` checks
+- Assignment type checking
 
 # Setup
 
@@ -84,6 +87,10 @@ Then, in your babel configuration (usually in your `.babelrc` file), add (at lea
 ## `skipAsserts?: boolean = false`
 
 Removes the asserts and keeps the domain models
+
+## `warnOnFailure?: boolean = false`
+
+Warns (`console.warn`) about type mismatch instead of throwing an error
 
 ## `globals?: Array<Object>`
 
@@ -211,7 +218,7 @@ foo(2.1) // flow ok, tcomb throws [tcomb] Invalid value 2.1 supplied to n: Integ
 foo('a') // flow throws, tcomb throws
 ```
 
-In order to enable this feature add the [`tcomb` definition file](https://github.com/gcanti/pantarei/blob/master/tcomb/3.2.2%2B.js) to the `[libs]` section of your `.flowconfig`.
+In order to enable this feature add the [`tcomb` definition file](https://github.com/gcanti/pantarei/blob/master/tcomb/3.x.x-0.33.x/tcomb.js) to the `[libs]` section of your `.flowconfig`.
 
 ## Runtime type introspection
 
