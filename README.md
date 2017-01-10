@@ -20,7 +20,11 @@ Differences:
 - [Assignment type checking](https://github.com/gcanti/babel-plugin-tcomb/pull/112) 
 - [Refacto function return type check](https://github.com/christophehurpeau/babel-plugin-tcomb/pull/1) 
 - [Fix object rest spread](https://github.com/christophehurpeau/babel-plugin-tcomb/pull/2) 
-- [Revert Immutability not working](https://github.com/gcanti/babel-plugin-tcomb/commit/a7def9ecff3e75ab32687e1787e05c78d5fb4eeb) 
+- [use tcomb-forked Promise type](https://github.com/gcanti/babel-plugin-tcomb/commit/02fbe3dc68ee815600e73aaf8e1799e6bdca13d7) 
+- async function partial support
+- Params are checked differently, without using arguments.
+ 
+You can see the full difference [in this compare view](https://github.com/gcanti/babel-plugin-tcomb/compare/master...christophehurpeau:master).
 
 # Why?
 
