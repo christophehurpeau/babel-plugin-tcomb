@@ -819,6 +819,13 @@ export default function ({ types: t, template }) {
           // transform into normal import
           node.importKind = 'value'
         }
+        if (node.specifiers) {
+          node.specifiers.forEach(specifier => {
+            if (specifier.importKind === 'type') {
+              specifier.importKind = null
+            }
+          })
+        }
       },
 
       ExportNamedDeclaration(path) {

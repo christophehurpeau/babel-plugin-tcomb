@@ -22,5 +22,5 @@ function getFullName(person) {
     surname: _t.String
   }), "person");
 
-  return `${ name } ${ surname }`;
+  return `${name} ${surname}`;
 }

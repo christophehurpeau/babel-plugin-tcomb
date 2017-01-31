@@ -23,6 +23,7 @@ Differences:
 - [use tcomb-forked Promise type](https://github.com/gcanti/babel-plugin-tcomb/commit/02fbe3dc68ee815600e73aaf8e1799e6bdca13d7) 
 - async function partial support
 - Params are checked differently, without using arguments.
+- support flow `import { type A } from 'types'`
  
 You can see the full difference [in this compare view](https://github.com/gcanti/babel-plugin-tcomb/compare/master...christophehurpeau:master).
 
